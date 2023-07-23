@@ -8,30 +8,36 @@ const currencies = {
 };
 
 app.get("/exchange", (req, res) => {
-  const resData = { msg: "", amount: "" };
   const { source, target, amount } = req.query;
   const supportCurrencies = Object.keys(currencies).join(",");
 
   if (!source || !currencies[source]) {
-    resData.msg = `The field 'source' should not be empty and only support ${supportCurrencies}`;
-    return res.send(resData);
+    return sendErrorResponse(
+      res,
+      `The field 'source' should not be empty and only support ${supportCurrencies}`
+    );
   }
+
   if (!target) {
-    resData.msg = `The field 'target' should not be empty and only support ${supportCurrencies}`;
-    return res.send(resData);
+    return sendErrorResponse(
+      res,
+      `The field 'target' should not be empty and only support ${supportCurrencies}`
+    );
   }
 
   const sourceAmount = convertStringAmountToNumber(amount);
   if (sourceAmount < 1) {
-    resData.msg =
-      "The field 'amount' should be greater than 0 and the format should be $1,234.56";
-    return res.send(resData);
+    return sendErrorResponse(
+      res,
+      "The field 'amount' should be greater than 0 and the format should be $1,234.56"
+    );
   }
 
   const targetAmount = (sourceAmount * currencies[source][target]).toFixed(2);
-  resData.amount = "$" + numberWithCommas(targetAmount);
-  resData.msg = "success";
-  return res.send(resData);
+  return res.json({
+    msg: "success",
+    amount: "$" + numberWithCommas(targetAmount),
+  });
 });
 
 app.get("/", (req, res) => {
@@ -61,6 +67,10 @@ function numberWithCommas(number) {
   }
 
   return result + decimalPart;
+}
+
+function sendErrorResponse(res, msg) {
+  res.status(400).json({ msg });
 }
 
 module.exports = app;
