@@ -68,7 +68,7 @@ describe("GET /exchange", () => {
     );
   });
 
-  it("should return correct converted amount for valid USD to TWD conversion with minimum amount", async () => {
+  it("should return correct converted amount for valid USD to TWD conversion", async () => {
     const response = await request(app)
       .get("/exchange")
       .query({ source: "USD", target: "TWD", amount: "$0.01" });
@@ -77,7 +77,7 @@ describe("GET /exchange", () => {
     expect(response.body.amount).toBe("$0.30");
   });
 
-  it("should return correct converted amount for valid USD to TWD conversion with maximum amount", async () => {
+  it("should return correct converted amount for valid USD to TWD conversion with large amount", async () => {
     const response = await request(app)
       .get("/exchange")
       .query({ source: "USD", target: "TWD", amount: "$999,999,999.99" });
@@ -86,7 +86,7 @@ describe("GET /exchange", () => {
     expect(response.body.amount).toBe("$30,443,999,999.70");
   });
 
-  it("should return error for very small target amount", async () => {
+  it("should return error for target amount less than $0.01", async () => {
     const response = await request(app)
       .get("/exchange")
       .query({ source: "USD", target: "TWD", amount: "$0.00001" });
