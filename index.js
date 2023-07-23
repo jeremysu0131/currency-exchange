@@ -21,21 +21,15 @@ app.get("/exchange", (req, res) => {
     resData.msg = `The field 'target' not null and only support ${supportCurrencies}`;
     return res.send(resData);
   }
-  if (!amount) {
-    resData.msg =
-      "The field 'amount' not null and the format should be $1,234.56";
-    return res.send(resData);
-  }
 
   const sourceAmount = convertStringAmountToNumber(amount);
   if (sourceAmount < 1) {
     resData.msg =
-      "The field 'amount' not less or equal 0 and the format should be $1,234.56";
+      "The field 'amount' should be greater than 0 and the format should be $1,234.56";
     return res.send(resData);
   }
 
-  let targetAmount = sourceAmount * currencies[source][target];
-  targetAmount = Math.round(targetAmount * 100) / 100;
+  const targetAmount = (sourceAmount * currencies[source][target]).toFixed(2);
   resData.amount = "$" + numberWithCommas(targetAmount);
   resData.msg = "success";
   return res.send(resData);
@@ -46,13 +40,12 @@ app.listen(port, () => {
 });
 
 function convertStringAmountToNumber(stringAmount) {
-  const amount = stringAmount.replace("$", "").replace(",", "");
-  return !isNaN(amount) ? parseFloat(amount) : -1;
+  const cleanedAmount = stringAmount.replace("$", "").replace(",", "");
+  return isNaN(cleanedAmount) ? -1 : parseFloat(cleanedAmount);
 }
 
-function numberWithCommas(x) {
-  const numStr = x.toString();
-  const numArr = numStr.split(".");
+function numberWithCommas(number) {
+  const numArr = number.split(".");
   const integerPart = numArr[0];
   const decimalPart = numArr[1] ? "." + numArr[1] : "";
 
