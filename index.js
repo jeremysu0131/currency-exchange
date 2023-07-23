@@ -14,11 +14,11 @@ app.get("/exchange", (req, res) => {
   const supportCurrencies = Object.keys(currencies).join(",");
 
   if (!source || !currencies[source]) {
-    resData.msg = `The field 'source' not null and only support ${supportCurrencies}`;
+    resData.msg = `The field 'source' should not be empty and only support ${supportCurrencies}`;
     return res.send(resData);
   }
   if (!target) {
-    resData.msg = `The field 'target' not null and only support ${supportCurrencies}`;
+    resData.msg = `The field 'target' should not be empty and only support ${supportCurrencies}`;
     return res.send(resData);
   }
 
