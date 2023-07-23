@@ -33,7 +33,8 @@ app.get("/exchange", (req, res) => {
     );
   }
 
-  const targetAmount = (sourceAmount * currencies[source][target]).toFixed(2);
+  const targetAmount =
+    Math.round(sourceAmount * currencies[source][target] * 100) / 100;
   return res.json({
     msg: "success",
     amount: "$" + numberWithCommas(targetAmount),
@@ -50,7 +51,7 @@ function convertStringAmountToNumber(stringAmount) {
 }
 
 function numberWithCommas(number) {
-  const numArr = number.split(".");
+  const numArr = number.toString().split(".");
   const integerPart = numArr[0];
   const decimalPart = numArr[1] ? "." + numArr[1] : "";
 
